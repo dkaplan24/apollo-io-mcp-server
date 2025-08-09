@@ -15,4 +15,4 @@ ENV NODE_ENV=production
 RUN npm ci --ignore-scripts --omit-dev
 EXPOSE 8080
 # IMPORTANT: bind to $PORT and serve SSE on /sse
-ENTRYPOINT ["sh","-c","npx mcp-proxy --port ${PORT:-8080} --path /sse node dist/index.js"]
+ENTRYPOINT ["node","dist/http.js"]
