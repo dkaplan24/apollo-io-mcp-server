@@ -1,11 +1,12 @@
-# Stage 1
+# Stage 1: build
 FROM node:22.12-alpine AS builder
-COPY . /app
 WORKDIR /app
-RUN npm install
+COPY package*.json ./
+RUN npm ci
+COPY . .
 RUN npm run build
 
-# Stage 2
+# Stage 2: runtime
 FROM node:22-alpine AS release
 WORKDIR /app
 COPY --from=builder /app/dist /app/dist
@@ -14,5 +15,5 @@ COPY --from=builder /app/package-lock.json /app/package-lock.json
 ENV NODE_ENV=production
 RUN npm ci --ignore-scripts --omit-dev
 EXPOSE 8080
-# IMPORTANT: bind to $PORT and serve SSE on /sse
-ENTRYPOINT ["node","dist/http.js"]
+# Serve SSE on /sse using the port Render provides
+ENTRYPOINT ["sh","-c","npx mcp-proxy --port ${PORT:-8080} --path /sse node dist/index.js"]
