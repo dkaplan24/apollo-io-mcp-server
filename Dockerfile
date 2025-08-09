@@ -16,4 +16,4 @@ ENV NODE_ENV=production
 RUN npm ci --ignore-scripts --omit-dev
 EXPOSE 8080
 # Serve SSE on /sse using the port Render provides
-ENTRYPOINT ["sh","-c","npx mcp-proxy --port ${PORT:-8080} --path /sse node dist/index.js"]
+ENTRYPOINT ["node","shim.js"]
